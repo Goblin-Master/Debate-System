@@ -1,0 +1,32 @@
+syntax = "v1"
+
+type LoginReq {
+	Account  string `json:"account"`
+	Password string `json:"password"`
+}
+
+type LoginResp {
+	UserID   int64  `json:"user_id,string"`
+	Nickname string `json:"nickname"`
+}
+
+type UserRegisterReq {
+	Account  string `json:"account"`
+	Password string `json:"password"`
+	Nickname string `json:"nickname"`
+}
+
+type UserRegisterResp {
+	UserID int64 `json:"user_id,string"`
+}
+
+@server (
+	prefix: /api
+	group:  user
+)
+service app-api {
+	@handler UserLoginHandler
+	post /user/login (LoginReq) returns (LoginResp)
+	@handler UserRegisterHandler
+	post /user/register (UserRegisterReq) returns (UserRegisterResp)
+}
