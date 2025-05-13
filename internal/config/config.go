@@ -1,12 +1,14 @@
 package config
 
 import (
-	snowflake "Debate-System/pkg/snowfake"
+	"Debate-System/pkg/gormx"
+	snowflake "Debate-System/utils/snowfake"
 	"github.com/zeromicro/go-zero/rest"
 )
 
 type Config struct {
-	rest.RestConf
+	App rest.RestConf
+	DB  gormx.Mysql
 }
 
 var Node, _ = snowflake.NewNode(1)

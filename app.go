@@ -20,12 +20,14 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf)
+	server := rest.MustNewServer(c.App)
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 
-	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
+	fmt.Printf("Mysql connect successfully %v\n", c.DB)
+	fmt.Printf("Starting server at %s:%d...\n", c.App.Host, c.App.Port)
+
 	server.Start()
 }

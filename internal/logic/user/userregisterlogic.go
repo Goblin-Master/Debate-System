@@ -2,7 +2,7 @@ package user
 
 import (
 	"Debate-System/internal/config"
-	snowflake "Debate-System/pkg/snowfake"
+	snowflake "Debate-System/utils/snowfake"
 	"context"
 
 	"Debate-System/internal/svc"
