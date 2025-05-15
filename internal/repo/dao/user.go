@@ -39,7 +39,7 @@ func (ud *UserDao) GetByAccount(account string) (model.User, error) {
 	return user, err
 }
 
-func (ud *UserDao) Insert(account, pwd, name string, id int64) error {
+func (ud *UserDao) Insert(account, pwd, name, avatar string, id int64) error {
 	_, err := ud.GetByAccount(account)
 	switch err {
 	case nil:
@@ -50,9 +50,16 @@ func (ud *UserDao) Insert(account, pwd, name string, id int64) error {
 			Password: pwd,
 			Nickname: name,
 			UserID:   id,
+			Avatar:   avatar,
 		}).Error
 		return err
 	default:
 		return err
 	}
+}
+
+func (ud *UserDao) CheckAccountAndPwd(account, pwd string) (model.User, error) {
+	var user model.User
+	err := ud.db.Where("account = ? and password = ?", account, pwd).Take(&user).Error
+	return user, err
 }

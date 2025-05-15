@@ -13,7 +13,8 @@ import (
 
 type IUserRepo interface {
 	GetUserByID(id int64) (model.User, error)
-	CreateUser(account, pwd, name string) (int64, error)
+	CreateUser(account, pwd, name, avatar string) (int64, error)
+	CheckLogin(account, pwd string) (model.User, error)
 }
 type UserRepo struct {
 	logx.Logger
@@ -24,9 +25,10 @@ type UserRepo struct {
 var _ IUserRepo = (*UserRepo)(nil)
 
 var (
-	USER_NOT_EXIST = errors.New("用户不存在")
-	ACCOUNT_EXIST  = errors.New("账号已经存在")
-	DEFAULT_ERROR  = errors.New("默认错误")
+	USER_NOT_EXIST       = errors.New("用户不存在")
+	ACCOUNT_EXIST        = errors.New("账号已经存在")
+	DEFAULT_ERROR        = errors.New("默认错误")
+	ACCOUNT_OR_PWD_ERROR = errors.New("账号或密码错误")
 )
 
 func NewUserRepo(ctx context.Context) *UserRepo {
@@ -49,9 +51,9 @@ func (u *UserRepo) GetUserByID(id int64) (model.User, error) {
 	return user, nil
 }
 
-func (u *UserRepo) CreateUser(account, pwd, name string) (int64, error) {
+func (u *UserRepo) CreateUser(account, pwd, name, avatar string) (int64, error) {
 	id := snowfake.GetIntId(global.Node)
-	err := u.userDao.Insert(account, pwd, name, id)
+	err := u.userDao.Insert(account, pwd, name, avatar, id)
 	if err != nil {
 		if errors.Is(err, dao.ACCOUNT_EXIST) {
 			return 0, ACCOUNT_EXIST
@@ -60,4 +62,11 @@ func (u *UserRepo) CreateUser(account, pwd, name string) (int64, error) {
 		return 0, DEFAULT_ERROR
 	}
 	return id, nil
+}
+func (u *UserRepo) CheckLogin(account, pwd string) (model.User, error) {
+	user, err := u.userDao.CheckAccountAndPwd(account, pwd)
+	if err != nil {
+		return model.User{}, ACCOUNT_OR_PWD_ERROR
+	}
+	return user, nil
 }

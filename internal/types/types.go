@@ -11,12 +11,14 @@ type LoginReq struct {
 type LoginResp struct {
 	UserID   int64  `json:"user_id,string"`
 	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
 }
 
 type UserRegisterReq struct {
 	Account  string `json:"account"`
 	Password string `json:"password"`
 	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
 }
 
 type UserRegisterResp struct {

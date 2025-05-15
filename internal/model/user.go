@@ -6,6 +6,7 @@ type User struct {
 	Account  string `gorm:"column:account;unique;type:varchar(64);not null"`
 	Nickname string `gorm:"column:nickname;type:varchar(32);not null"`
 	Password string `gorm:"column:password;type:varchar(64);not null"`
+	Avatar   string `gorm:"column:avatar;type:varchar(256);not null"`
 }
 
 func (User) TableName() string {

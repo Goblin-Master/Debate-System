@@ -3,6 +3,7 @@ package user
 import (
 	"Debate-System/internal/repo"
 	"context"
+	"errors"
 
 	"Debate-System/internal/svc"
 	"Debate-System/internal/types"
@@ -27,12 +28,13 @@ func NewUserRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 }
 
 func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterReq) (resp *types.UserRegisterResp, err error) {
-	id, err := l.repo.CreateUser(req.Account, req.Password, req.Nickname)
+	id, err := l.repo.CreateUser(req.Account, req.Password, req.Nickname, req.Avatar)
 	if err != nil {
-		l.Logger.Error(err)
+		if !errors.Is(err, repo.ACCOUNT_EXIST) {
+			l.Logger.Error(err)
+		}
 		return nil, err
 	}
-	return &types.UserRegisterResp{
-		UserID: id,
-	}, nil
+	resp = &types.UserRegisterResp{UserID: id}
+	return resp, nil
 }
