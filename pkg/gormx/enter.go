@@ -1,6 +1,7 @@
 package gormx
 
 import (
+	"Debate-System/internal/model"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -67,7 +68,11 @@ func Open(cfg Config, l logger.Interface) (*gorm.DB, error) {
 	return db, err
 }
 func autoMigrate(db *gorm.DB) error {
-	return db.AutoMigrate()
+	err := db.AutoMigrate(
+		model.User{},
+	)
+	fmt.Println("数据库迁移成功")
+	return err
 }
 func MustOpen(cfg Config, logger logger.Interface) *gorm.DB {
 	db, err := Open(cfg, logger)
@@ -78,5 +83,6 @@ func MustOpen(cfg Config, logger logger.Interface) *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("数据库初始化成功")
 	return db
 }

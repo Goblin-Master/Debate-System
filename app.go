@@ -1,6 +1,8 @@
 package main
 
 import (
+	"Debate-System/internal/global"
+	"Debate-System/pkg/gormx"
 	"flag"
 	"fmt"
 
@@ -26,7 +28,8 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 
-	fmt.Printf("Mysql connect successfully %v\n", c.DB)
+	global.DB = gormx.MustOpen(c.DB, nil)
+
 	fmt.Printf("Starting server at %s:%d...\n", c.App.Host, c.App.Port)
 
 	server.Start()

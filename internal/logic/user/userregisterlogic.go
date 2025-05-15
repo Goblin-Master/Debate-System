@@ -1,8 +1,6 @@
 package user
 
 import (
-	"Debate-System/internal/config"
-	snowflake "Debate-System/utils/snowfake"
 	"context"
 
 	"Debate-System/internal/svc"
@@ -26,8 +24,6 @@ func NewUserRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 }
 
 func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterReq) (resp *types.UserRegisterResp, err error) {
-	resp = &types.UserRegisterResp{
-		UserID: snowflake.GetIntId(config.Node),
-	}
+
 	return
 }
