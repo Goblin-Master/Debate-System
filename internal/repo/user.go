@@ -9,7 +9,6 @@ import (
 	"errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
-	"sync"
 )
 
 type IUserRepo interface {
@@ -24,9 +23,6 @@ type UserRepo struct {
 
 var _ IUserRepo = (*UserRepo)(nil)
 
-var userRepo *UserRepo
-var once sync.Once
-
 var (
 	USER_NOT_EXIST = errors.New("用户不存在")
 	ACCOUNT_EXIST  = errors.New("账号已经存在")
@@ -34,14 +30,11 @@ var (
 )
 
 func NewUserRepo(ctx context.Context) *UserRepo {
-	once.Do(func() {
-		userRepo = &UserRepo{
-			Logger:  logx.WithContext(ctx),
-			ctx:     ctx,
-			userDao: dao.NewUserDao(),
-		}
-	})
-	return userRepo
+	return &UserRepo{
+		Logger:  logx.WithContext(ctx),
+		ctx:     ctx,
+		userDao: dao.NewUserDao(),
+	}
 }
 
 func (u *UserRepo) GetUserByID(id int64) (model.User, error) {
