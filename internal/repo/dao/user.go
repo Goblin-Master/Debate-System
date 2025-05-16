@@ -1,41 +1,34 @@
 package dao
 
 import (
-	"Debate-System/internal/global"
 	"Debate-System/internal/model"
+	"Debate-System/internal/svc"
 	"errors"
 	"gorm.io/gorm"
-	"sync"
 )
 
 type UserDao struct {
-	db *gorm.DB
+	svcCtx *svc.ServiceContext
 }
-
-var userDao *UserDao
-var once sync.Once
 
 var (
 	ACCOUNT_EXIST = errors.New("账号已经存在")
 )
 
-func NewUserDao() *UserDao {
-	once.Do(func() {
-		userDao = &UserDao{
-			db: global.DB,
-		}
-	})
-	return userDao
+func NewUserDao(svcCtx *svc.ServiceContext) *UserDao {
+	return &UserDao{
+		svcCtx: svcCtx,
+	}
 }
 func (ud *UserDao) GetByID(id int64) (model.User, error) {
 	var user model.User
-	err := ud.db.Where("id = ?", id).Take(&user).Error
+	err := ud.svcCtx.DB.Where("id = ?", id).Take(&user).Error
 	return user, err
 }
 
 func (ud *UserDao) GetByAccount(account string) (model.User, error) {
 	var user model.User
-	err := ud.db.Where("account = ?", account).Take(&user).Error
+	err := ud.svcCtx.DB.Where("account = ?", account).Take(&user).Error
 	return user, err
 }
 
@@ -45,7 +38,7 @@ func (ud *UserDao) Insert(account, pwd, name, avatar string, id int64) error {
 	case nil:
 		return ACCOUNT_EXIST
 	case gorm.ErrRecordNotFound:
-		err = ud.db.Create(&model.User{
+		err = ud.svcCtx.DB.Create(&model.User{
 			Account:  account,
 			Password: pwd,
 			Nickname: name,
@@ -60,6 +53,6 @@ func (ud *UserDao) Insert(account, pwd, name, avatar string, id int64) error {
 
 func (ud *UserDao) CheckAccountAndPwd(account, pwd string) (model.User, error) {
 	var user model.User
-	err := ud.db.Where("account = ? and password = ?", account, pwd).Take(&user).Error
+	err := ud.svcCtx.DB.Where("account = ? and password = ?", account, pwd).Take(&user).Error
 	return user, err
 }

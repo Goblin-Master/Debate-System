@@ -23,7 +23,7 @@ func NewUserLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLog
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		repo:   repo.NewUserRepo(ctx),
+		repo:   repo.NewUserRepo(ctx, svcCtx),
 	}
 }
 

@@ -84,6 +84,14 @@ func NewNode(node int64) (*Node, error) {
 	return &n, nil
 }
 
+func SetNode(v int64) *Node {
+	node, err := NewNode(v)
+	if err != nil {
+		panic(err)
+	}
+	return node
+}
+
 // Generate 创建并返回一个唯一的 Snowflake ID
 // 确保唯一性：
 // - 系统时间准确

@@ -1,9 +1,9 @@
 package repo
 
 import (
-	"Debate-System/internal/global"
 	"Debate-System/internal/model"
 	"Debate-System/internal/repo/dao"
+	"Debate-System/internal/svc"
 	"Debate-System/utils/snowfake"
 	"context"
 	"errors"
@@ -19,6 +19,7 @@ type IUserRepo interface {
 type UserRepo struct {
 	logx.Logger
 	ctx     context.Context
+	svcCtx  *svc.ServiceContext
 	userDao *dao.UserDao
 }
 
@@ -31,11 +32,12 @@ var (
 	ACCOUNT_OR_PWD_ERROR = errors.New("账号或密码错误")
 )
 
-func NewUserRepo(ctx context.Context) *UserRepo {
+func NewUserRepo(ctx context.Context, svcCtx *svc.ServiceContext) *UserRepo {
 	return &UserRepo{
 		Logger:  logx.WithContext(ctx),
 		ctx:     ctx,
-		userDao: dao.NewUserDao(),
+		svcCtx:  svcCtx,
+		userDao: dao.NewUserDao(svcCtx),
 	}
 }
 
@@ -52,7 +54,7 @@ func (u *UserRepo) GetUserByID(id int64) (model.User, error) {
 }
 
 func (u *UserRepo) CreateUser(account, pwd, name, avatar string) (int64, error) {
-	id := snowfake.GetIntId(global.Node)
+	id := snowfake.GetIntId(u.svcCtx.Node)
 	err := u.userDao.Insert(account, pwd, name, avatar, id)
 	if err != nil {
 		if errors.Is(err, dao.ACCOUNT_EXIST) {

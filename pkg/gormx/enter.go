@@ -74,7 +74,7 @@ func autoMigrate(db *gorm.DB) error {
 	fmt.Println("数据库迁移成功")
 	return err
 }
-func MustOpen(cfg Config, logger logger.Interface) *gorm.DB {
+func InitDB(cfg Config, logger logger.Interface) *gorm.DB {
 	db, err := Open(cfg, logger)
 	if err != nil {
 		panic(err)
