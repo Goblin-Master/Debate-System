@@ -49,3 +49,17 @@ service app-api {
 	@handler UserInfoHandler
 	get /user/info returns (UserInfoResp)
 }
+
+type UploadFileResp {
+	Url string `json:"url"`
+}
+@server (
+	prefix: /api
+	group:  oss
+	jwt: Auth
+)
+
+service app-api {
+	@handler UploadFileHandler
+	post /oss/upload returns (UploadFileResp)
+}

@@ -30,3 +30,7 @@ type UserInfoResp struct {
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
 }
+
+type UploadFileResp struct {
+	Url string `json:"url"`
+}
