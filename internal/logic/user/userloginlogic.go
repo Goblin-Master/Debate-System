@@ -2,6 +2,7 @@ package user
 
 import (
 	"Debate-System/internal/repo"
+	"Debate-System/utils/jwtx"
 	"context"
 	"errors"
 
@@ -33,12 +34,26 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginReq) (resp *types.LoginResp, 
 		if !errors.Is(err, repo.ACCOUNT_OR_PWD_ERROR) {
 			l.Logger.Error(err)
 		}
-		return nil, err
+		return nil, ACCOUNT_OR_PWD_ERROR
 	}
+
+	token, err := jwtx.GenToken(jwtx.Claims{
+		UserID: user.UserID,
+		Auth: jwtx.Auth{
+			AccessSecret: l.svcCtx.Config.Auth.AccessSecret,
+			AccessExpire: l.svcCtx.Config.Auth.AccessExpire,
+		},
+	})
+	if err != nil {
+		l.Logger.Error(err)
+		return nil, DEFAULT_ERROR
+	}
+
 	resp = &types.LoginResp{
 		Nickname: user.Nickname,
 		UserID:   user.UserID,
 		Avatar:   user.Avatar,
+		Token:    token,
 	}
 	return resp, nil
 }

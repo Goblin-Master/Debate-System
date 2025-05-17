@@ -9,6 +9,7 @@ type LoginResp {
 	UserID   int64  `json:"user_id,string"`
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
+	Token    string `json:"token"`
 }
 
 type UserRegisterReq {
@@ -31,4 +32,20 @@ service app-api {
 	post /user/login (LoginReq) returns (LoginResp)
 	@handler UserRegisterHandler
 	post /user/register (UserRegisterReq) returns (UserRegisterResp)
+}
+
+type UserInfoResp {
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+}
+
+@server (
+	prefix: /api
+	group:  user
+	jwt: Auth
+)
+
+service app-api {
+	@handler UserInfoHandler
+	get /user/info returns (UserInfoResp)
 }

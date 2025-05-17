@@ -20,9 +20,9 @@ func NewUserDao(svcCtx *svc.ServiceContext) *UserDao {
 		svcCtx: svcCtx,
 	}
 }
-func (ud *UserDao) GetByID(id int64) (model.User, error) {
+func (ud *UserDao) GetByID(user_id int64) (model.User, error) {
 	var user model.User
-	err := ud.svcCtx.DB.Where("id = ?", id).Take(&user).Error
+	err := ud.svcCtx.DB.Where("user_id = ?", user_id).Take(&user).Error
 	return user, err
 }
 

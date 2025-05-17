@@ -33,7 +33,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterReq) (resp *type
 		if !errors.Is(err, repo.ACCOUNT_EXIST) {
 			l.Logger.Error(err)
 		}
-		return nil, err
+		return nil, ACCOUNT_EXIST
 	}
 	resp = &types.UserRegisterResp{UserID: id}
 	return resp, nil
