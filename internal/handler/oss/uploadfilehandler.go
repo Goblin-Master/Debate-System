@@ -9,6 +9,7 @@ import (
 
 func UploadFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		_, file, err := r.FormFile("file")
 		if err != nil {
 			response.Response(w, nil, err)

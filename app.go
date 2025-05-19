@@ -22,13 +22,13 @@ func main() {
 
 	logx.DisableStat()
 
-	server := rest.MustNewServer(c.App)
+	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
+
 	handler.RegisterHandlers(server, ctx)
 
-	fmt.Printf("Starting server at %s:%d...\n", c.App.Host, c.App.Port)
-
+	fmt.Printf("Starting server at %s:%d...\n", c.RestConf.Host, c.RestConf.Port)
 	server.Start()
 }

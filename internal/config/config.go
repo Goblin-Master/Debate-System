@@ -8,8 +8,8 @@ import (
 )
 
 type Config struct {
-	App  rest.RestConf
+	rest.RestConf
 	DB   gormx.Mysql
 	Auth jwtx.Auth
-	OSS  ossx.QiNiu
+	OSS  ossx.ALiYun
 }
