@@ -37,6 +37,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/user/info",
 				Handler: user.UserInfoHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user/auto",
+				Handler: user.UserAutoLoginHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api"),
