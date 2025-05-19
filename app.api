@@ -38,9 +38,7 @@ type UserInfoResp {
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
 }
-type UserAutoLoginResp {
-	Message string `json:"message"`
-}
+
 @server (
 	prefix: /api
 	group:  user
@@ -50,8 +48,6 @@ type UserAutoLoginResp {
 service app-api {
 	@handler UserInfoHandler
 	get /user/info returns (UserInfoResp)
-	@handler UserAutoLoginHandler
-	post /user/auto returns (UserAutoLoginResp)
 }
 
 type UploadFileResp {

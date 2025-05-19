@@ -31,10 +31,6 @@ type UserInfoResp struct {
 	Avatar   string `json:"avatar"`
 }
 
-type UserAutoLoginResp struct {
-	Message string `json:"message"`
-}
-
 type UploadFileResp struct {
 	Url string `json:"url"`
 }
