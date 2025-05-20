@@ -12,9 +12,10 @@ import (
 )
 
 type IUserRepo interface {
-	GetUserByID(id int64) (model.User, error)
+	GetUserByID(user_id int64) (model.User, error)
 	CreateUser(account, pwd, name, avatar string) (int64, error)
 	CheckLogin(account, pwd string) (model.User, error)
+	ModifyUserData(user_id int64, name, avatar string) error
 }
 type UserRepo struct {
 	logx.Logger
@@ -41,8 +42,8 @@ func NewUserRepo(ctx context.Context, svcCtx *svc.ServiceContext) *UserRepo {
 	}
 }
 
-func (u *UserRepo) GetUserByID(id int64) (model.User, error) {
-	user, err := u.userDao.GetByID(id)
+func (u *UserRepo) GetUserByID(user_id int64) (model.User, error) {
+	user, err := u.userDao.GetByID(user_id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return model.User{}, USER_NOT_EXIST
@@ -71,4 +72,20 @@ func (u *UserRepo) CheckLogin(account, pwd string) (model.User, error) {
 		return model.User{}, ACCOUNT_OR_PWD_ERROR
 	}
 	return user, nil
+}
+func (u *UserRepo) ModifyUserData(user_id int64, name, avatar string) error {
+	_, err := u.userDao.GetByID(user_id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return USER_NOT_EXIST
+		}
+		u.Logger.Error(err)
+		return DEFAULT_ERROR
+	}
+	err = u.userDao.UpdateData(user_id, name, avatar)
+	if err != nil {
+		u.Logger.Error(err)
+		return DEFAULT_ERROR
+	}
+	return nil
 }

@@ -19,7 +19,7 @@ type UserRegisterReq struct {
 	Account  string `json:"account"`
 	Password string `json:"password"`
 	Nickname string `json:"nickname"`
-	Avatar   string `json:"avatar"`
+	Avatar   string `json:"avatar,optional"`
 }
 
 type UserRegisterResp struct {
@@ -29,6 +29,15 @@ type UserRegisterResp struct {
 type UserInfoResp struct {
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
+}
+
+type UserModifyReq struct {
+	Nickname string `json:"nickname,optional"`
+	Avatar   string `json:"avatar,optional"`
+}
+
+type UserModifyResp struct {
+	Message string `json:"message"`
 }
 
 type UploadFileResp struct {

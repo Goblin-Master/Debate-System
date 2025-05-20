@@ -56,3 +56,11 @@ func (ud *UserDao) CheckAccountAndPwd(account, pwd string) (model.User, error) {
 	err := ud.svcCtx.DB.Where("account = ? and password = ?", account, pwd).Take(&user).Error
 	return user, err
 }
+
+func (ud *UserDao) UpdateData(user_id int64, name, avatar string) error {
+	err := ud.svcCtx.DB.Model(&model.User{}).Where("user_id = ?", user_id).Updates(model.User{
+		Nickname: name,
+		Avatar:   avatar,
+	}).Error
+	return err
+}

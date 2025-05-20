@@ -16,7 +16,7 @@ type UserRegisterReq {
 	Account  string `json:"account"`
 	Password string `json:"password"`
 	Nickname string `json:"nickname"`
-	Avatar   string `json:"avatar"`
+	Avatar   string `json:"avatar,optional"`
 }
 
 type UserRegisterResp {
@@ -39,6 +39,15 @@ type UserInfoResp {
 	Avatar   string `json:"avatar"`
 }
 
+type UserModifyReq {
+	Nickname string `json:"nickname,optional"`
+	Avatar   string `json:"avatar,optional"`
+}
+
+type UserModifyResp {
+	Message string `json:"message"`
+}
+
 @server (
 	prefix: /api
 	group:  user
@@ -48,6 +57,8 @@ type UserInfoResp {
 service app-api {
 	@handler UserInfoHandler
 	get /user/info returns (UserInfoResp)
+	@handler UserModifyHandler
+	put /user/modify (UserModifyReq) returns (UserModifyResp)
 }
 
 type UploadFileResp {
