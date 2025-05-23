@@ -3,32 +3,35 @@ package dao
 import (
 	"Debate-System/internal/model"
 	"Debate-System/internal/svc"
+	"context"
 	"errors"
 	"gorm.io/gorm"
 )
 
 type UserDao struct {
 	svcCtx *svc.ServiceContext
+	ctx    context.Context
 }
 
 var (
 	ACCOUNT_EXIST = errors.New("账号已经存在")
 )
 
-func NewUserDao(svcCtx *svc.ServiceContext) *UserDao {
+func NewUserDao(svcCtx *svc.ServiceContext, ctx context.Context) *UserDao {
 	return &UserDao{
 		svcCtx: svcCtx,
+		ctx:    ctx,
 	}
 }
 func (ud *UserDao) GetByID(user_id int64) (model.User, error) {
 	var user model.User
-	err := ud.svcCtx.DB.Where("user_id = ?", user_id).Take(&user).Error
+	err := ud.svcCtx.DB.WithContext(ud.ctx).Where("user_id = ?", user_id).Take(&user).Error
 	return user, err
 }
 
 func (ud *UserDao) GetByAccount(account string) (model.User, error) {
 	var user model.User
-	err := ud.svcCtx.DB.Where("account = ?", account).Take(&user).Error
+	err := ud.svcCtx.DB.WithContext(ud.ctx).Where("account = ?", account).Take(&user).Error
 	return user, err
 }
 
@@ -38,7 +41,7 @@ func (ud *UserDao) Insert(account, pwd, name, avatar string, id int64) error {
 	case nil:
 		return ACCOUNT_EXIST
 	case gorm.ErrRecordNotFound:
-		err = ud.svcCtx.DB.Create(&model.User{
+		err = ud.svcCtx.DB.WithContext(ud.ctx).Create(&model.User{
 			Account:  account,
 			Password: pwd,
 			Nickname: name,
@@ -53,12 +56,12 @@ func (ud *UserDao) Insert(account, pwd, name, avatar string, id int64) error {
 
 func (ud *UserDao) CheckAccountAndPwd(account, pwd string) (model.User, error) {
 	var user model.User
-	err := ud.svcCtx.DB.Where("account = ? and password = ?", account, pwd).Take(&user).Error
+	err := ud.svcCtx.DB.WithContext(ud.ctx).Where("account = ? and password = ?", account, pwd).Take(&user).Error
 	return user, err
 }
 
 func (ud *UserDao) UpdateData(user_id int64, name, avatar string) error {
-	err := ud.svcCtx.DB.Model(&model.User{}).Where("user_id = ?", user_id).Updates(model.User{
+	err := ud.svcCtx.DB.WithContext(ud.ctx).Model(&model.User{}).Where("user_id = ?", user_id).Updates(model.User{
 		Nickname: name,
 		Avatar:   avatar,
 	}).Error

@@ -38,7 +38,7 @@ func NewUserRepo(ctx context.Context, svcCtx *svc.ServiceContext) *UserRepo {
 		Logger:  logx.WithContext(ctx),
 		ctx:     ctx,
 		svcCtx:  svcCtx,
-		userDao: dao.NewUserDao(svcCtx),
+		userDao: dao.NewUserDao(svcCtx, ctx),
 	}
 }
 
