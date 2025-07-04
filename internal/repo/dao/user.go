@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"gorm.io/gorm"
+	"time"
 )
 
 type UserDao struct {
@@ -41,12 +42,15 @@ func (ud *UserDao) Insert(account, pwd, name, avatar string, id int64) error {
 	case nil:
 		return ACCOUNT_EXIST
 	case gorm.ErrRecordNotFound:
+		t := time.Now().UnixMilli()
 		err = ud.svcCtx.DB.WithContext(ud.ctx).Create(&model.User{
 			Account:  account,
 			Password: pwd,
 			Nickname: name,
 			UserID:   id,
 			Avatar:   avatar,
+			Ctime:    t,
+			Utime:    t,
 		}).Error
 		return err
 	default:
@@ -64,6 +68,7 @@ func (ud *UserDao) UpdateData(user_id int64, name, avatar string) error {
 	err := ud.svcCtx.DB.WithContext(ud.ctx).Model(&model.User{}).Where("user_id = ?", user_id).Updates(model.User{
 		Nickname: name,
 		Avatar:   avatar,
+		Utime:    time.Now().UnixMilli(),
 	}).Error
 	return err
 }

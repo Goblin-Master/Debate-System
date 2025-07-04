@@ -3,7 +3,9 @@ module Debate-System
 go 1.23.1
 
 require (
+	github.com/aliyun/alibabacloud-oss-go-sdk-v2 v1.2.2
 	github.com/golang-jwt/jwt/v4 v4.5.2
+	github.com/qiniu/go-sdk/v7 v7.25.3
 	github.com/stretchr/testify v1.10.0
 	github.com/zeromicro/go-zero v1.8.3
 	gorm.io/driver/mysql v1.5.7
@@ -15,7 +17,6 @@ require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/alex-ant/gomath v0.0.0-20160516115720-89013a210a82 // indirect
-	github.com/aliyun/alibabacloud-oss-go-sdk-v2 v1.2.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -44,7 +45,6 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.62.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
-	github.com/qiniu/go-sdk/v7 v7.25.3 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	go.opentelemetry.io/otel v1.24.0 // indirect
 	go.opentelemetry.io/otel/exporters/jaeger v1.17.0 // indirect

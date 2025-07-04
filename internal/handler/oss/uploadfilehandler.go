@@ -2,14 +2,18 @@ package handler
 
 import (
 	"Debate-System/internal/logic/oss"
-	"Debate-System/internal/response" // ①
+	"Debate-System/internal/response"
 	"Debate-System/internal/svc"
+	"errors"
 	"net/http"
 )
 
 func UploadFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		if svcCtx.Config.OSS.Enable == false {
+			response.Response(w, nil, errors.New("OSS未启用"))
+			return
+		}
 		_, file, err := r.FormFile("file")
 		if err != nil {
 			response.Response(w, nil, err)
