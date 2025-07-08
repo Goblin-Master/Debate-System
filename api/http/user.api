@@ -1,0 +1,76 @@
+syntax = "v1"
+
+type LoginReq {
+	Account  string `json:"account"`
+	Password string `json:"password"`
+}
+
+type LoginResp {
+	UserID   int64  `json:"user_id,string"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+	Token    string `json:"token"`
+}
+
+type UserRegisterReq {
+	Account  string `json:"account"`
+	Password string `json:"password"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar,optional"`
+}
+
+type UserRegisterResp {
+	UserID int64 `json:"user_id,string"`
+}
+
+@server (
+	prefix: /api
+	group:  user
+)
+service user-api {
+	@handler UserLoginHandler
+	post /user/login (LoginReq) returns (LoginResp)
+	@handler UserRegisterHandler
+	post /user/register (UserRegisterReq) returns (UserRegisterResp)
+}
+
+type UserInfoResp {
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+}
+
+type UserModifyReq {
+	Nickname string `json:"nickname,optional"`
+	Avatar   string `json:"avatar,optional"`
+}
+
+type UserModifyResp {
+	Message string `json:"message"`
+}
+
+@server (
+	prefix: /api
+	group:  user
+	jwt: Auth
+)
+
+service user-api {
+	@handler UserInfoHandler
+	get /user/info returns (UserInfoResp)
+	@handler UserModifyHandler
+	put /user/modify (UserModifyReq) returns (UserModifyResp)
+}
+
+type UploadFileResp {
+	Url string `json:"url"`
+}
+@server (
+	prefix: /api
+	group:  oss
+	jwt: Auth
+)
+
+service user-api {
+	@handler UploadFileHandler
+	post /oss/upload returns (UploadFileResp)
+}

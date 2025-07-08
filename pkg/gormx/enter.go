@@ -1,7 +1,6 @@
 package gormx
 
 import (
-	"Debate-System/internal/model"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -13,7 +12,7 @@ import (
 // 在config.go的结构体中定义一个xgorm.Mysql或者是xgorm.Postgres，然后yaml文件中写对应的配置，最后用MustOpen方法打开数据库，就能用了
 
 type Config interface {
-	getDSN() string
+	GetDSN() string
 }
 
 type Mysql struct {
@@ -32,7 +31,7 @@ type Postgres struct {
 	Database string
 }
 
-func (cfg Mysql) getDSN() string {
+func (cfg Mysql) GetDSN() string {
 
 	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.Username,
@@ -42,7 +41,7 @@ func (cfg Mysql) getDSN() string {
 		cfg.Database)
 }
 
-func (cfg Postgres) getDSN() string {
+func (cfg Postgres) GetDSN() string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
 		cfg.Host,
 		cfg.Username,
@@ -53,7 +52,7 @@ func (cfg Postgres) getDSN() string {
 
 // Gorm链接，默认是静默模式
 func Open(cfg Config, l logger.Interface) (*gorm.DB, error) {
-	dsn := cfg.getDSN()
+	dsn := cfg.GetDSN()
 	var open gorm.Dialector
 	switch cfg.(type) {
 	case Mysql:
@@ -66,23 +65,4 @@ func Open(cfg Config, l logger.Interface) (*gorm.DB, error) {
 	}
 	db, err := gorm.Open(open, &gorm.Config{Logger: l})
 	return db, err
-}
-func autoMigrate(db *gorm.DB) error {
-	err := db.AutoMigrate(
-		model.User{},
-	)
-	fmt.Println("数据库迁移成功")
-	return err
-}
-func InitDB(cfg Config, logger logger.Interface) *gorm.DB {
-	db, err := Open(cfg, logger)
-	if err != nil {
-		panic(err)
-	}
-	err = autoMigrate(db)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("数据库初始化成功")
-	return db
 }
