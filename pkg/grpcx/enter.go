@@ -2,7 +2,7 @@ package grpcx
 
 import (
 	"context"
-	"go.uber.org/zap"
+	"fmt"
 	"google.golang.org/grpc"
 	"net"
 	"strconv"
@@ -12,7 +12,6 @@ type Server struct {
 	*grpc.Server
 	Port   int
 	Name   string
-	Zap    *zap.SugaredLogger
 	cancel func()
 }
 
@@ -32,7 +31,7 @@ func (s *Server) Serve() error {
 	if err != nil {
 		return err
 	}
-	s.Zap.Infof("%s服务启动成功,port:%d", s.Name, s.Port)
+	fmt.Printf("starting grpc server at port %d,name %s\n", s.Port, s.Name)
 	return s.Server.Serve(l)
 }
 

@@ -1,0 +1,68 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+package user;
+
+option go_package = "user/user";
+
+service UserService {
+  // 登录
+  rpc UserLogin(LoginReq) returns (LoginResp);
+
+  // 注册
+  rpc UserRegister(UserRegisterReq) returns (UserRegisterResp);
+
+  // 获取用户信息
+  rpc UserInfo(UserInfoReq) returns (UserInfoResp);
+
+  // 修改用户信息
+  rpc UserModify(UserModifyReq) returns (UserModifyResp);
+  
+}
+// --- 用户基础服务 (无需JWT认证) ---
+
+message LoginReq {
+  string account = 1;
+  string password = 2;
+}
+
+message LoginResp {
+  int64 user_id = 1;
+  string nickname = 2;
+  string avatar = 3;
+  string token = 4;
+}
+
+message UserRegisterReq {
+  string account = 1;
+  string password = 2;
+  string nickname = 3;
+  string avatar = 4;
+}
+
+message UserRegisterResp {
+  int64 user_id = 1;
+}
+
+// --- 用户信息服务 (需要JWT认证) ---
+message UserInfoReq {
+  int64 user_id = 1;
+}
+
+message UserInfoResp {
+  string nickname = 1;
+  string avatar = 2;
+}
+
+message UserModifyReq {
+  int64 user_id = 1;
+  string nickname = 2;
+  string avatar = 3;
+}
+
+message UserModifyResp {
+  string message = 1;
+}
+
+
+
+

@@ -28,6 +28,7 @@ func NewUserLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLog
 }
 
 func (l *UserLoginLogic) UserLogin(req *types.LoginReq) (resp *types.LoginResp, err error) {
+	l.Logger.Info("测试链路")
 	user, err := l.repo.CheckLogin(req.Account, req.Password)
 	if err != nil {
 		if !errors.Is(err, repo.ACCOUNT_OR_PWD_ERROR) {
