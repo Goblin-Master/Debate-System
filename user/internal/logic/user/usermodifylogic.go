@@ -31,12 +31,14 @@ func (l *UserModifyLogic) UserModify(req *types.UserModifyReq) (resp *types.User
 	if req.Avatar == "" && req.Nickname == "" {
 		return nil, VAILD_EMPTY
 	}
-	user_id, err := jwtx.GetUserID(l.ctx)
-	if err != nil {
-		l.Logger.Error(err)
-		return nil, DEFAULT_ERROR
+	if req.UserID == 0 {
+		req.UserID, err = jwtx.GetUserID(l.ctx)
+		if err != nil {
+			l.Logger.Error(err)
+			return nil, DEFAULT_ERROR
+		}
 	}
-	err = l.repo.ModifyUserData(user_id, req.Nickname, req.Avatar)
+	err = l.repo.ModifyUserData(req.UserID, req.Nickname, req.Avatar)
 	if err != nil {
 		if errors.Is(err, repo.USER_NOT_EXIST) {
 			return nil, USER_NOT_EXIST

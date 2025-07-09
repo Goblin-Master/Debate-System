@@ -26,12 +26,17 @@ type UserRegisterResp struct {
 	UserID int64 `json:"user_id,string"`
 }
 
+type UserInfoReq struct {
+	UserID int64 `json:"user_id,optional"`
+}
+
 type UserInfoResp struct {
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
 }
 
 type UserModifyReq struct {
+	UserID   int64  `json:"user_id,optional"`
 	Nickname string `json:"nickname,optional"`
 	Avatar   string `json:"avatar,optional"`
 }

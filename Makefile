@@ -4,3 +4,7 @@ user-http-generate:
 	goctl api go --api api/http/user.api --dir ./user --home ./template
 user-run:
 	go mod tidy && cd user && go run user.go
+
+.PHONY: grpc
+grpc:
+	@buf generate api/proto

@@ -34,12 +34,17 @@ service user-api {
 	post /user/register (UserRegisterReq) returns (UserRegisterResp)
 }
 
+type UserInfoReq {
+	UserID int64 `json:"user_id,optional"`
+}
+
 type UserInfoResp {
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
 }
 
 type UserModifyReq {
+	UserID   int64  `json:"user_id,optional"`
 	Nickname string `json:"nickname,optional"`
 	Avatar   string `json:"avatar,optional"`
 }
@@ -56,7 +61,7 @@ type UserModifyResp {
 
 service user-api {
 	@handler UserInfoHandler
-	get /user/info returns (UserInfoResp)
+	get /user/info (UserInfoReq)returns (UserInfoResp)
 	@handler UserModifyHandler
 	put /user/modify (UserModifyReq) returns (UserModifyResp)
 }

@@ -26,13 +26,15 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 	}
 }
 
-func (l *UserInfoLogic) UserInfo() (resp *types.UserInfoResp, err error) {
-	user_id, err := jwtx.GetUserID(l.ctx)
-	if err != nil {
-		l.Logger.Error(err)
-		return nil, USER_NOT_EXIST
+func (l *UserInfoLogic) UserInfo(req *types.UserInfoReq) (resp *types.UserInfoResp, err error) {
+	if req.UserID == 0 {
+		req.UserID, err = jwtx.GetUserID(l.ctx)
+		if err != nil {
+			l.Logger.Error(err)
+			return nil, USER_NOT_EXIST
+		}
 	}
-	user, err := l.repo.GetUserByID(user_id)
+	user, err := l.repo.GetUserByID(req.UserID)
 	if err != nil {
 		if !errors.Is(err, repo.USER_NOT_EXIST) {
 			l.Logger.Error(err)
