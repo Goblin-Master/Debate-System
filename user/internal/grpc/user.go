@@ -6,6 +6,7 @@ import (
 	"Debate-System/user/internal/svc"
 	"Debate-System/user/internal/types"
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 )
 
@@ -26,6 +27,7 @@ func (u *UserServiceServer) Register(server grpc.ServiceRegistrar) {
 }
 
 func (u *UserServiceServer) UserLogin(ctx context.Context, req *user_grpc.LoginReq) (*user_grpc.LoginResp, error) {
+	fmt.Printf("链路ctx: %#v/n", ctx)
 	l := user.NewUserLoginLogic(ctx, u.svcCtx)
 	resp, err := l.UserLogin(&types.LoginReq{
 		Account:  req.Account,
@@ -38,6 +40,7 @@ func (u *UserServiceServer) UserLogin(ctx context.Context, req *user_grpc.LoginR
 		Nickname: resp.Nickname,
 		UserId:   resp.UserID,
 		Avatar:   resp.Avatar,
+		Token:    resp.Token,
 	}, nil
 }
 
