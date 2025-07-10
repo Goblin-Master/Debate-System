@@ -3,7 +3,6 @@ package client
 import (
 	user_grpc "Debate-System/api/proto/gen/user"
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
 )
 
@@ -11,13 +10,7 @@ type UserClient struct {
 	client user_grpc.UserServiceClient
 }
 
-func NewUserClient(c user_grpc.UserServiceClient) *UserClient {
-	return &UserClient{
-		client: c,
-	}
-}
 func (u *UserClient) UserLogin(ctx context.Context, in *user_grpc.LoginReq, opts ...grpc.CallOption) (*user_grpc.LoginResp, error) {
-	fmt.Printf("链路ctx: %#v/n", ctx)
 	return u.client.UserLogin(ctx, in, opts...)
 }
 
