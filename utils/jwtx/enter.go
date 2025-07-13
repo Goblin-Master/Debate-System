@@ -21,6 +21,7 @@ type Auth struct {
 	AccessSecret string `json:"accessSecret"`
 	AccessExpire int64  `json:"accessExpire"`
 }
+
 type Claims struct {
 	Auth
 	UserID int64 `json:"user_id"`

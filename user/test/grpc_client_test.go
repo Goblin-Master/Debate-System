@@ -15,8 +15,9 @@ func TestClient(t *testing.T) {
 	}
 
 	// 4. 调用方法
-	resp, err := c.UserInfo(context.Background(), &user_grpc.UserInfoReq{
-		UserId: 1941033845134462976,
+	resp, err := c.UserLogin(context.Background(), &user_grpc.LoginReq{
+		Account:  "test",
+		Password: "test",
 	})
 	assert.NoError(t, err)
 	t.Log(resp)
