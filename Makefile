@@ -1,5 +1,5 @@
 .PHONY: user-http-generate user-run
-user-http-generate:
+user-generate:
 # --home 是指定模板目录
 	goctl api go --api api/http/user.api --dir ./user --home ./template
 user-run:
