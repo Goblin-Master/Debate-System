@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"Debate-System/response"
 	"Debate-System/user/internal/logic/oss"
-	"Debate-System/user/internal/response"
 	"Debate-System/user/internal/svc"
 	"errors"
 	"net/http"

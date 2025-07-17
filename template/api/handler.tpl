@@ -3,7 +3,7 @@ package handler
 import (
     "net/http"
     "github.com/zeromicro/go-zero/rest/httpx"
-    "Debate-System/internal/response"// ①
+    "Debate-System/response"// ①
     {{.ImportPackages}}
 )
 

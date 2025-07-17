@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"Debate-System/response"
 	"Debate-System/user/internal/logic/user"
-	"Debate-System/user/internal/response" // ①
 	"Debate-System/user/internal/svc"
 	"Debate-System/user/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
