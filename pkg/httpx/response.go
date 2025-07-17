@@ -1,7 +1,9 @@
 package httpx
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 )
 
@@ -17,4 +19,13 @@ func (r *Response) JSONScan(val any) error {
 	}
 	err := json.NewDecoder(r.Body).Decode(val)
 	return err
+}
+
+func (r *Response) StringBody() string {
+	if r.err != nil {
+		return ""
+	}
+	body, _ := io.ReadAll(r.Body)
+	r.Body = io.NopCloser(bytes.NewReader(body)) // 重新放回，
+	return string(body)
 }

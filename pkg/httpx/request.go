@@ -57,6 +57,13 @@ func (req *Request) AddParam(key string, value string) *Request {
 	return req
 }
 
+// URL 返回已经拼接好查询参数的完整 URL
+func (req *Request) URL() string {
+	if req.err != nil || req.req == nil {
+		return ""
+	}
+	return req.req.URL.String()
+}
 func (req *Request) Do() *Response {
 	if req.err != nil {
 		return &Response{
