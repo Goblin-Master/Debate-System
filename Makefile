@@ -11,6 +11,8 @@ user-build:
 chat-generate:
 # --home 是指定模板目录
 	goctl api go --api api/http/chat.api --dir ./chat --home ./template
+chat-run:
+	go mod tidy && cd chat && go run chat.go
 
 .PHONY: grpc
 grpc:

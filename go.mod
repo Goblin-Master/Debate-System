@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/aliyun/alibabacloud-oss-go-sdk-v2 v1.2.2
+	github.com/coze-dev/coze-go v0.0.0-20250714105120-a8d478684f20
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/gorilla/websocket v1.5.3
 	github.com/qiniu/go-sdk/v7 v7.25.3
@@ -25,7 +26,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
-	github.com/coze-dev/coze-go v0.0.0-20250714105120-a8d478684f20 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect

@@ -1,0 +1,28 @@
+syntax = "v1"
+type CozeCreateConversationReq {
+	Theme string `json:"theme"` //辩论的主题
+}
+type CozeCreateConversationResp {
+	ConversationID string `json:"conversion_id"`
+}
+
+type CozeChatReq {
+	ConversationID string `json:"conversation_id"` //用于明确是哪一场辩论
+	Content        string `json:"content"`         //用户输入的内容
+}
+
+type CozeChatResp {
+	Message string `json:"message"` //用于判断是否成功掉用，ai的输出会通过ws流式返回
+}
+
+@server (
+	prefix: /api
+	group:  ai
+	jwt: Auth
+)
+service chat-api {
+	@handler CozeChatHandler
+	post /chat/coze (CozeChatReq) returns (CozeChatResp)
+	@handler CozeCreateConversationHandler
+	post /chat/coze/conversation (CozeCreateConversationReq) returns (CozeCreateConversationResp)
+}
