@@ -17,15 +17,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/chat/coze",
-				Handler: ai.CozeChatHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
 				Path:    "/chat/coze/conversation",
 				Handler: ai.CozeCreateConversationHandler(serverCtx),
 			},
 		},
+
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api"),
 	)
 }

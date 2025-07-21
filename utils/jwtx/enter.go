@@ -12,7 +12,7 @@ import (
 )
 
 type MyClaims struct {
-	Userid int64 `json:"user_id"`
+	UserID int64 `json:"user_id"`
 	jwt.RegisteredClaims
 }
 
@@ -80,7 +80,7 @@ func ParseToken(secret string, request *http.Request) (int64, error) {
 		return 0, DEFAULT_ERROR
 	}
 	if claims, ok := t.Claims.(*MyClaims); ok && t.Valid {
-		return claims.Userid, nil
+		return claims.UserID, nil
 	}
 	return 0, DEFAULT_ERROR
 }

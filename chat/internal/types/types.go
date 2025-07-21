@@ -11,12 +11,3 @@ type CozeCreateConversationResp struct {
 	ConversationID string `json:"conversion_id"`
 	Ctime          int64  `json:"ctime"`
 }
-
-type CozeChatReq struct {
-	ConversationID string `json:"conversation_id"` //用于明确是哪一场辩论
-	Content        string `json:"content"`         //用户输入的内容
-}
-
-type CozeChatResp struct {
-	Message string `json:"message"` //用于判断是否成功掉用，ai的输出会通过ws流式返回
-}

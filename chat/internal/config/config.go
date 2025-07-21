@@ -15,6 +15,9 @@ type Config struct {
 	// 为 gRPC 服务配置一个独立的字段
 	RpcServer zrpc.RpcServerConf
 
+	// 为websocket 服务配置一个独立字段
+	WSServer rest.RestConf
+
 	// 在顶层显式定义共享的 Auth 配置，解决冲突问题
 	Auth jwtx.Auth
 
