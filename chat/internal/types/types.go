@@ -9,6 +9,7 @@ type CozeCreateConversationReq struct {
 
 type CozeCreateConversationResp struct {
 	ConversationID string `json:"conversion_id"`
+	Ctime          int64  `json:"ctime"`
 }
 
 type CozeChatReq struct {

@@ -4,6 +4,7 @@ type CozeCreateConversationReq {
 }
 type CozeCreateConversationResp {
 	ConversationID string `json:"conversion_id"`
+	Ctime          int64  `json:"ctime"`
 }
 
 type CozeChatReq {
@@ -18,7 +19,6 @@ type CozeChatResp {
 @server (
 	prefix: /api
 	group:  ai
-	jwt: Auth
 )
 service chat-api {
 	@handler CozeChatHandler

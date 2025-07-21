@@ -27,6 +27,5 @@ func main() {
 	handler.RegisterHandlers(server, ctx)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.HttpServer.Host, c.HttpServer.Port)
-	fmt.Println(c)
 	server.Start()
 }
