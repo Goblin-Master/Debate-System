@@ -7,13 +7,14 @@ user-run:
 user-build:
 	cd user/deploy && goctl docker --go ../user.go --exe user
 
-.PHONY: chat-generate chat-run
+.PHONY: chat-generate chat-run ws-test
 chat-generate:
 # --home 是指定模板目录
 	goctl api go --api api/http/chat.api --dir ./chat --home ./template
 chat-run:
 	go mod tidy && cd chat && go run chat.go
-
+ws-test:
+	go mod tidy && cd chat/tset && go test -run TestMain
 .PHONY: grpc
 grpc:
 	@buf generate api/proto

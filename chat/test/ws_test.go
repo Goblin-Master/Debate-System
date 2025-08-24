@@ -17,23 +17,18 @@ import (
 
 var configFile = flag.String("f", "J:\\Debate-System\\chat\\etc\\chat-api.yaml", "the config file")
 
-func Test_WS_Server(t *testing.T) {
+func TestMain(m *testing.M) {
 	flag.Parse()
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	logx.DisableStat()
 
-	//// ✅ 正确方式：启动链路追踪
-	//trace.StartAgent(trace.Config{})
-	//defer trace.StopAgent()
-
 	ctx := svc.NewServiceContext(c)
 	hub := ws.NewHub(ctx)
 
-	server := rest.MustNewServer(c.HttpServer)
+	server := rest.MustNewServer(c.WSServer)
 	defer server.Stop()
 
-	// 关键：注册 /ws 路由，完全沿用你的 handler 逻辑
 	server.AddRoute(rest.Route{
 		Method: http.MethodGet,
 		Path:   "/ws",
@@ -60,5 +55,7 @@ func Test_WS_Server(t *testing.T) {
 	},
 		rest.WithJwt(ctx.Config.Auth.AccessSecret),
 	)
-	server.Start()
+
+	go server.Start() // 用 goroutine 启动
+	select {}         // 阻塞住，防止退出
 }
