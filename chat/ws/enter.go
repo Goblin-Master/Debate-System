@@ -49,6 +49,7 @@ func (h *Hub) AddConn(ctx context.Context, user_id, conversation_id string, c *w
 	go func() {
 		for {
 			typ, message, err := c.ReadMessage()
+			//监视是否在线
 			if err != nil {
 				if websocket.IsCloseError(err, websocket.CloseNoStatusReceived) {
 					//客户端断开连接
@@ -65,46 +66,63 @@ func (h *Hub) AddConn(ctx context.Context, user_id, conversation_id string, c *w
 					//为每次对话加一个超时控制时间
 					msgCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 					defer cancel()
-					resp, err := h.cozeChat(msgCtx, conversation_id, user_id, string(message))
-					if err != nil {
-						//包装错误响应给前端
-						logger.Error(err)
-						err = value.WriteMessage(typ, wrapMsg(FAIL, "服务掉用失败"))
-						if err != nil {
-							logger.Error(err)
-						}
-						return false
-					}
-					// coze成功响应
-					for {
-						event, err := resp.Recv()
-						if err != nil {
-							if errors.Is(err, context.Canceled) {
-								err = value.WriteMessage(typ, wrapMsg(FAIL, "对话超时"))
-							} else if errors.Is(err, io.EOF) {
-								err = value.WriteMessage(typ, wrapMsg(END, "回答结束"))
-							} else {
-								logger.Error(err)
-								err = value.WriteMessage(typ, wrapMsg(FAIL, "服务中断"))
-							}
-							if err != nil {
-								logger.Error(err)
-							}
-							return false
-						}
-						if event.Event == coze.ChatEventConversationMessageDelta {
-							err = value.WriteMessage(typ, wrapMsg(SUCCESS, event.Message.Content))
-							if err != nil {
-								logger.Error(err)
-							}
-						}
-					}
+					//coze对话
+					h.cozeChat(msgCtx, logger, value, typ, conversation_id, user_id, string(message))
 				}
 				// 返回 true，确保会继续往后遍历
 				return true
 			})
 		}
 	}()
+}
+
+func (h *Hub) cozeChat(ctx context.Context, l logx.Logger, c *websocket.Conn, typ int, conversation_id, user_id, content string) {
+	request := &coze.CreateChatsReq{
+		ConversationID: conversation_id,
+		BotID:          h.svcCtx.Config.Coze.BotID,
+		UserID:         user_id,
+		Messages: []*coze.Message{
+			coze.BuildUserQuestionText(content, nil),
+		},
+	}
+	resp, err := h.svcCtx.CozeClient.Chat.Stream(ctx, request)
+	if err != nil {
+		//包装错误响应给前端
+		l.Error(err)
+		err = c.WriteMessage(typ, wrapMsg(FAIL, "服务掉用失败"))
+		if err != nil {
+			l.Error(err)
+		}
+		return
+	}
+	// coze成功响应
+	for {
+		event, err := resp.Recv()
+		if err != nil {
+			if errors.Is(err, context.Canceled) {
+				err = c.WriteMessage(typ, wrapMsg(FAIL, "对话超时"))
+			} else if errors.Is(err, io.EOF) {
+				err = c.WriteMessage(typ, wrapMsg(END, "回答结束"))
+			} else {
+				l.Error(err)
+				err = c.WriteMessage(typ, wrapMsg(FAIL, "服务中断"))
+			}
+			if err != nil {
+				l.Error(err)
+			}
+			return
+		}
+		if event.Event == coze.ChatEventConversationMessageDelta {
+			err = c.WriteMessage(typ, wrapMsg(SUCCESS, event.Message.Content))
+			if err != nil {
+				l.Error(err)
+			}
+		}
+	}
+}
+
+func wrapMsg(code int, msg string) []byte {
+	return []byte(fmt.Sprintf("{\"code\": \"%d\", \"msg\": \"%s\"}", code, msg))
 }
 
 //func (h *Hub) Server() {
@@ -135,18 +153,3 @@ func (h *Hub) AddConn(ctx context.Context, user_id, conversation_id string, c *w
 //	})
 //	http.ListenAndServe(h.svcCtx.Config.WS.Addr, nil)
 //}
-
-func (h *Hub) cozeChat(ctx context.Context, conversation_id, user_id, content string) (coze.Stream[coze.ChatEvent], error) {
-	request := &coze.CreateChatsReq{
-		ConversationID: conversation_id,
-		BotID:          h.svcCtx.Config.Coze.BotID,
-		UserID:         user_id,
-		Messages: []*coze.Message{
-			coze.BuildUserQuestionText(content, nil),
-		},
-	}
-	return h.svcCtx.CozeClient.Chat.Stream(ctx, request)
-}
-func wrapMsg(code int, msg string) []byte {
-	return []byte(fmt.Sprintf("{\"code\": \"%d\", \"msg\": \"%s\"}", code, msg))
-}
