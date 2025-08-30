@@ -6,7 +6,17 @@ type ModifyScoreReq {
 type ModifyScoreResp {
 	Message string `json:"message"`
 }
-
+type TopNScoreReq {
+	N int `path:"n"`
+}
+type BaseTopNScore {
+	UserID   int64  `json:"user_id,string"`
+	Avatar   string `json:"avatar"`
+	Nickname string `json:"nickname"`
+}
+type TopNScoreResp {
+	List []BaseTopNScore `json:"list"`
+}
 @server (
 	prefix: /api
 	group:  score
@@ -14,4 +24,6 @@ type ModifyScoreResp {
 service reward-api {
 	@handler ModifyScoreHandler
 	put /reward/score/modify (ModifyScoreReq) returns (ModifyScoreResp)
+	@handler TopNScoreHandler
+	get /reward/score/topN/:n (TopNScoreReq) returns (TopNScoreResp)
 }

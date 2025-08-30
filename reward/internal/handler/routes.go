@@ -20,6 +20,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/reward/score/modify",
 				Handler: score.ModifyScoreHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/reward/score/topN/:n",
+				Handler: score.TopNScoreHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api"),
 	)

@@ -11,3 +11,17 @@ type ModifyScoreReq struct {
 type ModifyScoreResp struct {
 	Message string `json:"message"`
 }
+
+type TopNScoreReq struct {
+	N int `path:"n"`
+}
+
+type BaseTopNScore struct {
+	UserID   int64  `json:"user_id,string"`
+	Avatar   string `json:"avatar"`
+	Nickname string `json:"nickname"`
+}
+
+type TopNScoreResp struct {
+	List []BaseTopNScore `json:"list"`
+}
