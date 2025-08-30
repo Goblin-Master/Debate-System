@@ -10,6 +10,7 @@ type Redis struct {
 	Host     string
 	Port     int
 	DB       int
+	Username string
 	Password string
 	Enable   bool
 }
@@ -27,7 +28,7 @@ func InitRedis(config Redis) redis.Cmdable {
 		Addr:            config.DSN(),
 		Dialer:          nil,
 		OnConnect:       nil,
-		Username:        "",
+		Username:        config.Username,
 		Password:        config.Password,
 		DB:              config.DB,
 		MaxRetries:      0,

@@ -1,0 +1,17 @@
+syntax = "v1"
+type ModifyScoreReq {
+	UserID int64 `json:"user_id"`
+	Score  int   `json:"score,optional"`
+}
+type ModifyScoreResp {
+	Message string `json:"message"`
+}
+
+@server (
+	prefix: /api
+	group:  score
+)
+service reward-api {
+	@handler ModifyScoreHandler
+	put /reward/score/modify (ModifyScoreReq) returns (ModifyScoreResp)
+}

@@ -15,6 +15,14 @@ chat-run:
 	go mod tidy && cd chat && go run chat.go
 ws-test:
 	go mod tidy && cd chat/tset && go test -run TestMain
+
+.PHONY: reward-generate reward-run
+reward-generate:
+# --home 是指定模板目录
+	goctl api go --api api/http/reward.api --dir ./reward --home ./template
+reward-run:
+	go mod tidy && cd reward && go run reward.go
+
 .PHONY: grpc
 grpc:
 	@buf generate api/proto
