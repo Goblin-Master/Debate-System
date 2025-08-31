@@ -4,8 +4,8 @@
 package types
 
 type ModifyScoreReq struct {
-	UserID int64 `json:"user_id"`
-	Score  int   `json:"score,optional"`
+	UserID string `json:"user_id"`
+	Score  int    `json:"score,optional"`
 }
 
 type ModifyScoreResp struct {
@@ -13,10 +13,11 @@ type ModifyScoreResp struct {
 }
 
 type TopNScoreReq struct {
-	N int `path:"n"`
+	N int `path:"n,range=[0:20]"`
 }
 
 type BaseTopNScore struct {
+	Score    int    `json:"score"`
 	UserID   int64  `json:"user_id,string"`
 	Avatar   string `json:"avatar"`
 	Nickname string `json:"nickname"`

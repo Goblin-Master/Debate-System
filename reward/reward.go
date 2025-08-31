@@ -1,12 +1,12 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-
 	"Debate-System/reward/internal/config"
 	"Debate-System/reward/internal/handler"
 	"Debate-System/reward/internal/svc"
+	"flag"
+	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
@@ -19,6 +19,7 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+	logx.DisableStat()
 
 	server := rest.MustNewServer(c.HttpServer)
 	defer server.Stop()

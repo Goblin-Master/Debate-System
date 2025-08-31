@@ -1,6 +1,7 @@
 package score
 
 import (
+	"Debate-System/reward/internal/repo"
 	"context"
 
 	"Debate-System/reward/internal/svc"
@@ -11,20 +12,23 @@ import (
 
 type TopNScoreLogic struct {
 	logx.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx        context.Context
+	svcCtx     *svc.ServiceContext
+	rewardRepo *repo.RewardRepo
 }
 
 func NewTopNScoreLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TopNScoreLogic {
 	return &TopNScoreLogic{
-		Logger: logx.WithContext(ctx),
-		ctx:    ctx,
-		svcCtx: svcCtx,
+		Logger:     logx.WithContext(ctx),
+		ctx:        ctx,
+		svcCtx:     svcCtx,
+		rewardRepo: repo.NewRewardRepo(ctx, svcCtx),
 	}
 }
 
 func (l *TopNScoreLogic) TopNScore(req *types.TopNScoreReq) (resp *types.TopNScoreResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	resp = &types.TopNScoreResp{
+		List: l.rewardRepo.GetTopN(req.N),
+	}
+	return resp, nil
 }

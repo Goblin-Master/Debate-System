@@ -1,15 +1,16 @@
 syntax = "v1"
 type ModifyScoreReq {
-	UserID int64 `json:"user_id"`
-	Score  int   `json:"score,optional"`
+	UserID string `json:"user_id"`
+	Score  int    `json:"score,optional"`
 }
 type ModifyScoreResp {
 	Message string `json:"message"`
 }
 type TopNScoreReq {
-	N int `path:"n"`
+	N int `path:"n,range=[0:20]"`
 }
 type BaseTopNScore {
+	Score    int    `json:"score"`
 	UserID   int64  `json:"user_id,string"`
 	Avatar   string `json:"avatar"`
 	Nickname string `json:"nickname"`

@@ -47,5 +47,6 @@ func InitRedis(config Redis) redis.Cmdable {
 	if _, err := client.Ping(context.Background()).Result(); err != nil {
 		panic(fmt.Sprintf("redis init error:%v", err))
 	}
+	fmt.Println("redis init success")
 	return client
 }
