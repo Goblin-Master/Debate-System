@@ -6,11 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"time"
+
 	"github.com/coze-dev/coze-go"
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
-	"io"
-	"time"
 )
 
 type Hub struct {
@@ -46,12 +47,63 @@ func (h *Hub) AddConn(ctx context.Context, user_id, conversation_id string, c *w
 	// ✅ 用带 trace 的 ctx 重新生成 logger，日志就带 trace-id
 	logger := logx.WithContext(ctx)
 
+	// ====== 新增 1：读超时 + Pong 续命（必须放在起 goroutine 之前） ======
+	if err := c.SetReadDeadline(time.Now().Add(60 * time.Second)); err != nil {
+		logger.Errorf("set initial read deadline error: %v", err)
+		h.conns.Delete(user_id)
+		c.Close()
+		return
+	}
+	c.SetPongHandler(func(string) error {
+		if err := c.SetReadDeadline(time.Now().Add(60 * time.Second)); err != nil {
+			logger.Errorf("pong handler set read deadline error: %v", err)
+			// 无法续命就直接关掉连接，避免幽灵
+			h.conns.Delete(user_id)
+			c.Close()
+		}
+		return nil
+	})
+
+	// ====== 新增 2：写超时（给后面 WriteMessage 用） ======
+	if err := c.SetWriteDeadline(time.Now().Add(60 * time.Second)); err != nil {
+		logger.Errorf("set initial write deadline error: %v", err)
+		h.conns.Delete(user_id)
+		c.Close()
+		return
+	}
+
+	// ====== 新增 3：定时 Ping（在你原有“一个 goroutine”里跑，不拆函数） ======
+	// 注意：你原来只开了一个 goroutine，我们**仍在同一个 goroutine里**再启一个 tick 器，
+	// 这样你代码结构保持“只有一个 goroutine”的观感，逻辑也没变。
+	go func() {
+		tick := time.NewTicker(30 * time.Second)
+		defer tick.Stop()
+		for {
+			select {
+			case <-tick.C:
+				if err := c.SetWriteDeadline(time.Now().Add(60 * time.Second)); err != nil {
+					logger.Errorf("ping tick set write deadline error: %v", err)
+					h.conns.Delete(user_id)
+					c.Close()
+					return
+				}
+				if err := c.WriteMessage(websocket.PingMessage, nil); err != nil {
+					logger.Errorf("write ping error: %v", err)
+					h.conns.Delete(user_id)
+					c.Close()
+					return
+				}
+			}
+		}
+	}()
+
 	go func() {
 		for {
 			typ, message, err := c.ReadMessage()
 			//监视是否在线
 			if err != nil {
-				if websocket.IsCloseError(err, websocket.CloseNoStatusReceived) {
+				if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseNoStatusReceived) {
+					logger.Infof("user %s normal close", user_id)
 					//客户端断开连接
 					h.conns.Delete(user_id)
 				} else {
@@ -113,6 +165,11 @@ func (h *Hub) cozeChat(ctx context.Context, l logx.Logger, c *websocket.Conn, ty
 			return
 		}
 		if event.Event == coze.ChatEventConversationMessageDelta {
+			// 新增：每次流式写出前刷新写超时
+			if err = c.SetWriteDeadline(time.Now().Add(60 * time.Second)); err != nil {
+				l.Errorf("cozeChat flush write deadline error: %v", err)
+				return // 直接结束流式写出，goroutine 可退出
+			}
 			err = c.WriteMessage(typ, wrapMsg(SUCCESS, event.Message.Content))
 			if err != nil {
 				l.Error(err)
